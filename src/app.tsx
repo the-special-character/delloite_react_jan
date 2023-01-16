@@ -1,11 +1,4 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
-
-const container = document.getElementById("root");
-const root = createRoot(container);
-
-const bgColor = "red";
-const txtColor = "white";
+import React from 'react';
 
 // Rules
 // 1. Fist latter of the function name should be upper case
@@ -13,16 +6,24 @@ const txtColor = "white";
 // 3. style property should be object and property name should be in camel
 // 4. instead of clas we should use className property
 
-const App = () => {
+type Props = {
+  logoText: string;
+  heading: string;
+};
+
+// Props are immutable
+const App = ({ logoText, heading }: Props) => {
   return (
     <>
       <header>
-        <a href="">Logo</a>
+        <a href="">{logoText}</a>
         <nav
-          style={{
-            backgroundColor: bgColor,
-            color: txtColor,
-          }}
+          style={
+            {
+              // backgroundColor: bgColor,
+              // color: txtColor,
+            }
+          }
         >
           <ul className="list">
             <li>Item 1</li>
@@ -33,15 +34,11 @@ const App = () => {
           </ul>
         </nav>
       </header>
-      <main></main>
+      <main>
+        <h1>{heading}</h1>
+      </main>
     </>
   );
 };
 
-root.render(
-  <>
-    <App />
-    <App />
-    <App />
-  </>
-);
+export default App;
