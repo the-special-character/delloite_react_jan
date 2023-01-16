@@ -1,74 +1,58 @@
 import React, { Component } from 'react';
 
-type Props = {
-  logoText: string;
-  heading: string;
-};
+type Props = {};
 
 type State = {
-  number: number;
+  count: number;
 };
 
-// let number = 0;
-
-// component will rerender only if
-// 1. Props value change
-// 2. state value change
-
-// State is mutable
 class App1 extends Component<Props, State> {
+  // Local memeory
+  state = {
+    count: 0,
+  };
+
   constructor(props: Props) {
     super(props);
-
-    this.state = {
-      number: 0,
-    };
+    // this.increment = this.increment.bind(this);
+    // this.decrement = this.decrement.bind(this);
   }
 
-  // method overriding
-  render() {
-    console.log('render');
+  increment = () => {
+    // sst
+    // this.setState({ count: this.state.count + 1 });
 
-    const { heading, logoText } = this.props;
-    const { number } = this.state;
+    // ssf
+    this.setState(({ count }, props) => {
+      return {
+        count: count + 1,
+      };
+    });
+  };
+
+  decrement = () => {
+    // this.setState({ count: this.state.count - 1 });
+    this.setState(({ count }, props) => {
+      return {
+        count: count - 1,
+      };
+    });
+  };
+
+  render() {
+    // cs
+    const { count } = this.state;
 
     return (
-      <>
-        <header>
-          <a href="">{logoText}</a>
-          <nav
-            style={
-              {
-                // backgroundColor: bgColor,
-                // color: txtColor,
-              }
-            }
-          >
-            <ul className="list">
-              <li>Item 1</li>
-              <li>Item 2</li>
-              <li>Item 3</li>
-              <li>Item 4</li>
-              <li>Item 5</li>
-            </ul>
-          </nav>
-        </header>
-        <main>
-          <h1>{heading}</h1>
-          <button
-            type="button"
-            onClick={() => {
-              this.setState({
-                number: 5,
-              });
-            }}
-          >
-            +
-          </button>
-          <p>{number}</p>
-          <button type="button">-</button>
-        </main>
-      </>
+      <div>
+        <button type="button" onClick={this.increment}>
+          +
+        </button>
+        <p>{count}</p>
+        <button type="button" onClick={this.decrement}>
+          -
+        </button>
+      </div>
     );
   }
 }

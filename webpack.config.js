@@ -5,7 +5,7 @@ module.exports = {
   entry: './src/index.tsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'main.js'
+    filename: 'main.js',
   },
   mode: 'development',
   module: {
@@ -13,19 +13,22 @@ module.exports = {
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader'
-        }
-      }
-    ]
+        use: 'babel-loader',
+      },
+      {
+        test: /\.css$/,
+        exclude: /node_modules/,
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
+      },
+    ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js', '.json']
+    extensions: ['.tsx', '.ts', '.js', '.json'],
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      filename: 'index.html'
-    })
-  ]
+      filename: 'index.html',
+    }),
+  ],
 };
