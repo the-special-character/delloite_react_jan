@@ -4,9 +4,7 @@ import { FilterType, TodoItemType } from '../../types/types';
 import TodoList from './todoList';
 import TodoFilter from './todoFilter';
 
-type Props = {
-  filterType: FilterType;
-};
+type Props = {};
 
 type State = {
   todoList: TodoItemType[];
@@ -25,7 +23,7 @@ class Todo extends Component<Props, State> {
     super(props);
     this.state = {
       todoList: [] as TodoItemType[],
-      filterType: props.filterType,
+      filterType: FilterType.all,
     };
     // server call
   }

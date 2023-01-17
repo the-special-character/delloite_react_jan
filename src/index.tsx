@@ -64,9 +64,9 @@ if (container) {
 
   root.render(
     <>
-      {/* <Todo filterType={FilterType.completed} /> */}
+      <Todo />
       {/* <App logoText="Yagnesh Modh" heading="Banner Page" /> */}
-      <Test />
+      {/* <Test /> */}
     </>,
   );
 }
