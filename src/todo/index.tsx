@@ -1,21 +1,17 @@
 import React, { Component, createRef } from 'react';
-import clsx from 'clsx';
+import TodoForm from './todoForm';
 
 type Props = {};
 
-type TodoItemType = {
-  id: number;
-  text: string;
-  isDone: boolean;
-};
-
 type State = {
   todoList: TodoItemType[];
+  filterType: FilterType;
 };
 
 class Todo extends Component<Props, State> {
   state = {
     todoList: [] as TodoItemType[],
+    filterType: FilterType.all,
   };
 
   todoTextInput = createRef<HTMLInputElement>();
@@ -64,59 +60,42 @@ class Todo extends Component<Props, State> {
     });
   };
 
+  setFilterType = (filterType: FilterType) => {
+    this.setState({ filterType });
+  };
+
   render() {
     console.log('render');
 
-    const { todoList } = this.state;
+    const { todoList, filterType } = this.state;
 
     return (
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center h-screen">
         <h1 className="text-4xl font-bold my-10">Todo App</h1>
-        <form className="flex" onSubmit={this.addTodo}>
-          <div>
-            <label htmlFor="todo_text" className="sr-only">
-              Todo Text
-            </label>
-            <input
-              type="text"
-              id="todo_text"
-              placeholder="write your todo here"
-              ref={this.todoTextInput}
-            />
-          </div>
-          <button type="submit" className="btn">
-            Add Todo
+        <TodoForm addTodo={this.addTodo} ref={this.todoTextInput} />
+
+        <div className="flex w-full">
+          <button
+            onClick={() => this.setFilterType(FilterType.all)}
+            type="button"
+            className="btn flex-1"
+          >
+            All
           </button>
-        </form>
-        <div className="w-full">
-          {todoList.map((todoItem) => {
-            return (
-              <div className="flex items-center m-4" key={todoItem.id}>
-                <input
-                  type="checkbox"
-                  checked={todoItem.isDone}
-                  onChange={() => this.toggleComplete(todoItem)}
-                />
-                <p
-                  key={todoItem.id}
-                  className={clsx('flex-1 px-4', {
-                    'line-through': todoItem.isDone,
-                  })}
-                  // style={{
-                  //   textDecoration: todoItem.isDone ? 'line-through' : 'none',
-                  // }}
-                >
-                  {todoItem.text}
-                </p>
-                <button
-                  className="btn"
-                  onClick={() => this.deleteTodo(todoItem)}
-                >
-                  Delete
-                </button>
-              </div>
-            );
-          })}
+          <button
+            onClick={() => this.setFilterType(FilterType.pending)}
+            type="button"
+            className="btn flex-1"
+          >
+            Pending
+          </button>
+          <button
+            onClick={() => this.setFilterType(FilterType.completed)}
+            type="button"
+            className="btn flex-1"
+          >
+            Completed
+          </button>
         </div>
       </div>
     );

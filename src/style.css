@@ -4,6 +4,6 @@
 
 @layer components {
   .btn {
-    @apply bg-blue-500 text-neutral-100 px-4 font-semibold;
+    @apply bg-blue-500 text-neutral-100 px-4 py-2 font-semibold;
   }
 }
