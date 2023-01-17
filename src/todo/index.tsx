@@ -30,38 +30,68 @@ class Todo extends Component<Props, State> {
 
   todoTextInput = createRef<HTMLInputElement>();
 
-  addTodo = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const todoTextInput = this.todoTextInput.current;
-    if (todoTextInput) {
-      this.setState(
-        ({ todoList }) => {
-          const todoText = todoTextInput.value;
-          return {
-            todoList: [
-              ...todoList,
-              { id: new Date().valueOf(), text: todoText, isDone: false },
-            ],
-          };
-        },
-        () => {
-          todoTextInput.value = '';
-        },
-      );
-    }
+  async componentDidMount() {
+    try {
+      const res = await fetch('http://localhost:3000/todoList');
+      const json = await res.json();
+      this.setState({ todoList: json });
+    } catch (error) {}
+  }
+
+  addTodo = async (event: React.FormEvent<HTMLFormElement>) => {
+    try {
+      event.preventDefault();
+      const todoTextInput = this.todoTextInput.current;
+      if (todoTextInput) {
+        const todoText = todoTextInput.value;
+        const res = await fetch('http://localhost:3000/todoList', {
+          method: 'POST',
+          body: JSON.stringify({ text: todoText, isDone: false }),
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        });
+
+        const json = await res.json();
+
+        this.setState(
+          ({ todoList }) => {
+            return {
+              todoList: [...todoList, json],
+            };
+          },
+          () => {
+            todoTextInput.value = '';
+          },
+        );
+      }
+    } catch (error) {}
   };
 
-  toggleComplete = (todoItem: TodoItemType) => {
-    this.setState(({ todoList }) => {
-      const index = todoList.findIndex((x) => x.id === todoItem.id);
-      return {
-        todoList: [
-          ...todoList.slice(0, index),
-          { ...todoItem, isDone: !todoItem.isDone },
-          ...todoList.slice(index + 1),
-        ],
-      };
-    });
+  toggleComplete = async (todoItem: TodoItemType) => {
+    try {
+      const res = await fetch(`http://localhost:3000/todoList/${todoItem.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ ...todoItem, isDone: !todoItem.isDone }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      const json = await res.json();
+
+      this.setState(({ todoList }) => {
+        const index = todoList.findIndex((x) => x.id === todoItem.id);
+        return {
+          todoList: [
+            ...todoList.slice(0, index),
+            json,
+            ...todoList.slice(index + 1),
+          ],
+        };
+      });
+    } catch (error) {}
   };
 
   deleteTodo = (todoItem: TodoItemType) => {
