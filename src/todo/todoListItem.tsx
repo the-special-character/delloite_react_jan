@@ -1,20 +1,29 @@
 import React, { memo } from 'react';
-import { TodoItemType } from '../../types/types';
+import { StatusType, TodoItemType } from '../../types/types';
 import clsx from 'clsx';
 
 type Props = {
   todoItem: TodoItemType;
   toggleComplete: (todoItem: TodoItemType) => void;
   deleteTodo: (todoItem: TodoItemType) => void;
+  updateTodoStatus?: StatusType;
+  deleteTodoStatus?: StatusType;
 };
 
-const TodoListItem = ({ todoItem, toggleComplete, deleteTodo }: Props) => {
+const TodoListItem = ({
+  todoItem,
+  toggleComplete,
+  deleteTodo,
+  updateTodoStatus,
+  deleteTodoStatus,
+}: Props) => {
   console.log('todo list item');
   return (
     <div className="flex items-center m-4" key={todoItem.id}>
       <input
         type="checkbox"
         checked={todoItem.isDone}
+        disabled={updateTodoStatus?.action === 'REQUEST'}
         onChange={() => toggleComplete(todoItem)}
       />
       <p
@@ -28,7 +37,11 @@ const TodoListItem = ({ todoItem, toggleComplete, deleteTodo }: Props) => {
       >
         {todoItem.text}
       </p>
-      <button className="btn" onClick={() => deleteTodo(todoItem)}>
+      <button
+        className="btn"
+        disabled={deleteTodoStatus?.action === 'REQUEST'}
+        onClick={() => deleteTodo(todoItem)}
+      >
         Delete
       </button>
     </div>

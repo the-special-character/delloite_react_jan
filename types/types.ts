@@ -9,3 +9,10 @@ export enum FilterType {
   pending = 'pending',
   completed = 'completed',
 }
+
+export type StatusType = {
+  id: number;
+  type: string;
+  action: 'REQUEST' | 'FAIL';
+  error?: Error;
+};
