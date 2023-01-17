@@ -4,18 +4,31 @@ import { FilterType, TodoItemType } from '../../types/types';
 import TodoList from './todoList';
 import TodoFilter from './todoFilter';
 
-type Props = {};
+type Props = {
+  filterType: FilterType;
+};
 
 type State = {
   todoList: TodoItemType[];
   filterType: FilterType;
 };
 
+// Mounting
+// 1. constructor
+// 2.
+
 class Todo extends Component<Props, State> {
-  state = {
-    todoList: [] as TodoItemType[],
-    filterType: FilterType.all,
-  };
+  // based on props if you want to define state value
+  // to bnd a method
+  // analytics
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      todoList: [] as TodoItemType[],
+      filterType: props.filterType,
+    };
+    // server call
+  }
 
   todoTextInput = createRef<HTMLInputElement>();
 
