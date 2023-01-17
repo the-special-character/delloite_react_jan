@@ -15,18 +15,35 @@ if (container) {
     state = {
       name: 'yagnesh modh',
       count: 0,
+      error: null,
     };
 
     changeName = () => {
       this.setState({ name: 'rohit sharma' });
     };
 
+    static getDerivedStateFromError(error) {
+      return {
+        error,
+      };
+    }
+
+    componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+      // server call
+      console.log('errorInfo', errorInfo.componentStack);
+    }
+
     render() {
       console.log('render test');
+      const { count, error } = this.state;
+
+      if (error) {
+        return <h1>{error.message}</h1>;
+      }
 
       return (
         <div>
-          <App1 name={this.state.name} />
+          {count < 5 && <App1 name={this.state.name} />}
           <button type="button" onClick={this.changeName}>
             Change Name
           </button>

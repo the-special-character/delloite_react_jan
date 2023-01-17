@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
+import shallowCompare from 'react-addons-shallow-compare'; // ES6
 
 type Props = {
   name: string;
@@ -16,12 +17,20 @@ type State = {
 // 4. componentDidMount
 
 // updating
+// getDerivedStateFromProps
+// shouldComponentUpdate
+// render
+// getSnapshotBeforeUpdate
+// componentDidUpdate
 
 // unmounting
+// componentWillUnmount
 
 // error
+// getDerivedStateFromError
+// componentDidCatch
 
-class App1 extends Component<Props, State> {
+class App1 extends PureComponent<Props, State> {
   // Local memeory
 
   // call only once
@@ -56,19 +65,45 @@ class App1 extends Component<Props, State> {
     };
   }
 
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return shallowCompare(this, nextProps, nextState);
+  //   // if (this.props !== nextProps || this.state !== nextState) {
+  //   //   return true;
+  //   // }
+  //   // return false;
+  // }
+
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    return 10;
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log(snapshot);
+  }
+
   // fetch data from server
   // register events
   // manipulate dom element
   // call only once
+  mouseMove = () => {
+    console.log('mousemove');
+  };
+
   async componentDidMount() {
     try {
-      document.addEventListener('copy', () => {
-        console.log('coppied');
-      });
+      document.addEventListener('mousemove', this.mouseMove);
+      this.interval = setInterval(() => {
+        console.log('interval');
+      }, 1000);
       const res = await fetch('https://jsonplaceholder.typicode.com/todos/1');
       const json = await res.json();
       this.setState({ user: json });
     } catch (error) {}
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousemove', this.mouseMove);
+    clearInterval(this.interval);
   }
 
   increment = () => {
@@ -76,6 +111,7 @@ class App1 extends Component<Props, State> {
     // this.setState({ count: this.state.count + 1 });
 
     // ssf
+
     this.setState(({ count }, props) => {
       return {
         count: count + 1,
@@ -97,6 +133,10 @@ class App1 extends Component<Props, State> {
     // cs
     const { count, userName, user } = this.state;
     const { name } = this.props;
+
+    if (count > 5) {
+      throw new Error('somethig went wrong....');
+    }
 
     return (
       <div>
