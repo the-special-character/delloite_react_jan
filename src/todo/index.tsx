@@ -1,39 +1,73 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
+import clsx from 'clsx';
 
 type Props = {};
 
 type TodoItemType = {
   id: number;
   text: string;
+  isDone: boolean;
 };
 
 type State = {
   todoList: TodoItemType[];
-  todoText: string;
 };
 
 class Todo extends Component<Props, State> {
   state = {
     todoList: [] as TodoItemType[],
-    todoText: '',
   };
+
+  todoTextInput = createRef<HTMLInputElement>();
 
   addTodo = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    this.setState(({ todoText, todoList }, props) => {
+    const todoTextInput = this.todoTextInput.current;
+    if (todoTextInput) {
+      this.setState(
+        ({ todoList }, props) => {
+          const todoText = todoTextInput.value;
+          return {
+            todoList: [
+              ...todoList,
+              { id: new Date().valueOf(), text: todoText, isDone: false },
+            ],
+            todoText: '',
+          };
+        },
+        () => {
+          todoTextInput.value = '';
+        },
+      );
+    }
+  };
+
+  toggleComplete = (todoItem: TodoItemType) => {
+    this.setState(({ todoList }) => {
+      const index = todoList.findIndex((x) => x.id === todoItem.id);
       return {
-        todoList: [...todoList, { id: new Date().valueOf(), text: todoText }],
-        todoText: '',
+        todoList: [
+          ...todoList.slice(0, index),
+          { ...todoItem, isDone: !todoItem.isDone },
+          ...todoList.slice(index + 1),
+        ],
       };
     });
   };
 
-  changeText = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ todoText: event.target.value });
+  deleteTodo = (todoItem: TodoItemType) => {
+    this.setState(({ todoList }) => {
+      const index = todoList.findIndex((x) => x.id === todoItem.id);
+      return {
+        todoList: [...todoList.slice(0, index), ...todoList.slice(index + 1)],
+      };
+    });
   };
 
   render() {
-    const { todoText, todoList } = this.state;
+    console.log('render');
+
+    const { todoList } = this.state;
 
     return (
       <div className="flex flex-col items-center">
@@ -47,8 +81,7 @@ class Todo extends Component<Props, State> {
               type="text"
               id="todo_text"
               placeholder="write your todo here"
-              value={todoText}
-              onChange={this.changeText}
+              ref={this.todoTextInput}
             />
           </div>
           <button type="submit" className="btn">
@@ -59,11 +92,28 @@ class Todo extends Component<Props, State> {
           {todoList.map((todoItem) => {
             return (
               <div className="flex items-center m-4" key={todoItem.id}>
-                <input type="checkbox" name="" id="" />
-                <p key={todoItem.id} className="flex-1 px-4">
+                <input
+                  type="checkbox"
+                  checked={todoItem.isDone}
+                  onChange={() => this.toggleComplete(todoItem)}
+                />
+                <p
+                  key={todoItem.id}
+                  className={clsx('flex-1 px-4', {
+                    'line-through': todoItem.isDone,
+                  })}
+                  // style={{
+                  //   textDecoration: todoItem.isDone ? 'line-through' : 'none',
+                  // }}
+                >
                   {todoItem.text}
                 </p>
-                <button className="btn">Delete</button>
+                <button
+                  className="btn"
+                  onClick={() => this.deleteTodo(todoItem)}
+                >
+                  Delete
+                </button>
               </div>
             );
           })}
