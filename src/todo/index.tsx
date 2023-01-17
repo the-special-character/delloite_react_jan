@@ -1,5 +1,8 @@
 import React, { Component, createRef } from 'react';
 import TodoForm from './todoForm';
+import { FilterType, TodoItemType } from '../../types/types';
+import TodoList from './todoList';
+import TodoFilter from './todoFilter';
 
 type Props = {};
 
@@ -21,14 +24,13 @@ class Todo extends Component<Props, State> {
     const todoTextInput = this.todoTextInput.current;
     if (todoTextInput) {
       this.setState(
-        ({ todoList }, props) => {
+        ({ todoList }) => {
           const todoText = todoTextInput.value;
           return {
             todoList: [
               ...todoList,
               { id: new Date().valueOf(), text: todoText, isDone: false },
             ],
-            todoText: '',
           };
         },
         () => {
@@ -73,30 +75,13 @@ class Todo extends Component<Props, State> {
       <div className="flex flex-col items-center h-screen">
         <h1 className="text-4xl font-bold my-10">Todo App</h1>
         <TodoForm addTodo={this.addTodo} ref={this.todoTextInput} />
-
-        <div className="flex w-full">
-          <button
-            onClick={() => this.setFilterType(FilterType.all)}
-            type="button"
-            className="btn flex-1"
-          >
-            All
-          </button>
-          <button
-            onClick={() => this.setFilterType(FilterType.pending)}
-            type="button"
-            className="btn flex-1"
-          >
-            Pending
-          </button>
-          <button
-            onClick={() => this.setFilterType(FilterType.completed)}
-            type="button"
-            className="btn flex-1"
-          >
-            Completed
-          </button>
-        </div>
+        <TodoList
+          todoList={todoList}
+          filterType={filterType}
+          toggleComplete={this.toggleComplete}
+          deleteTodo={this.deleteTodo}
+        />
+        <TodoFilter setFilterType={this.setFilterType} />
       </div>
     );
   }

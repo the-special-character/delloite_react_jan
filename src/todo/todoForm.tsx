@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, memo } from 'react';
 
 type Props = {
   addTodo: (event: React.FormEvent<HTMLFormElement>) => void;
@@ -6,6 +6,7 @@ type Props = {
 
 const TodoForm = forwardRef<HTMLInputElement, Props>(
   ({ addTodo }: Props, ref) => {
+    console.log('todoForm render');
     return (
       <form className="flex" onSubmit={addTodo}>
         <div>
@@ -27,4 +28,4 @@ const TodoForm = forwardRef<HTMLInputElement, Props>(
   },
 );
 
-export default TodoForm;
+export default memo(TodoForm);

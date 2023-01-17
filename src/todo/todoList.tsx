@@ -1,7 +1,14 @@
 import clsx from 'clsx';
-import React from 'react';
+import React, { memo } from 'react';
+import { FilterType, TodoItemType } from '../../types/types';
+import TodoListItem from './todoListItem';
 
-type Props = {};
+type Props = {
+  todoList: TodoItemType[];
+  filterType: FilterType;
+  toggleComplete: (todoItem: TodoItemType) => void;
+  deleteTodo: (todoItem: TodoItemType) => void;
+};
 
 const TodoList = ({
   todoList,
@@ -9,6 +16,7 @@ const TodoList = ({
   toggleComplete,
   deleteTodo,
 }: Props) => {
+  console.log('TodoList render');
   return (
     <div className="w-full flex-1">
       {todoList.map((todoItem) => {
@@ -18,27 +26,12 @@ const TodoList = ({
           (filterType === FilterType.completed && todoItem.isDone)
         ) {
           return (
-            <div className="flex items-center m-4" key={todoItem.id}>
-              <input
-                type="checkbox"
-                checked={todoItem.isDone}
-                onChange={() => toggleComplete(todoItem)}
-              />
-              <p
-                key={todoItem.id}
-                className={clsx('flex-1 px-4', {
-                  'line-through': todoItem.isDone,
-                })}
-                // style={{
-                //   textDecoration: todoItem.isDone ? 'line-through' : 'none',
-                // }}
-              >
-                {todoItem.text}
-              </p>
-              <button className="btn" onClick={() => deleteTodo(todoItem)}>
-                Delete
-              </button>
-            </div>
+            <TodoListItem
+              key={todoItem.id}
+              todoItem={todoItem}
+              toggleComplete={toggleComplete}
+              deleteTodo={deleteTodo}
+            />
           );
         }
         return null;
@@ -47,4 +40,4 @@ const TodoList = ({
   );
 };
 
-export default TodoList;
+export default memo(TodoList);
