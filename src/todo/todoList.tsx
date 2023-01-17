@@ -1,42 +1,21 @@
 import React, { memo } from 'react';
-import { StatusType, TodoItemType } from '../../types/types';
 import TodoListItem from './todoListItem';
+import { TodoContext } from '../context/todoContext';
 
-type Props = {
-  todoList: TodoItemType[];
-  updateTodoStatus: StatusType[];
-  deleteTodoStatus: StatusType[];
-  toggleComplete: (todoItem: TodoItemType) => void;
-  deleteTodo: (todoItem: TodoItemType) => void;
-};
+type Props = {};
 
-const TodoList = ({
-  todoList,
-  toggleComplete,
-  deleteTodo,
-  updateTodoStatus,
-  deleteTodoStatus,
-}: Props) => {
+const TodoList = ({}: Props) => {
   console.log('TodoList render');
   return (
-    <>
-      {todoList.map((todoItem) => {
-        return (
-          <TodoListItem
-            key={todoItem.id}
-            todoItem={todoItem}
-            toggleComplete={toggleComplete}
-            deleteTodo={deleteTodo}
-            updateTodoStatus={updateTodoStatus.find(
-              (x) => x.id === todoItem.id,
-            )}
-            deleteTodoStatus={deleteTodoStatus.find(
-              (x) => x.id === todoItem.id,
-            )}
-          />
-        );
-      })}
-    </>
+    <TodoContext.Consumer>
+      {({ todoList }) => (
+        <>
+          {todoList.map((todoItem) => {
+            return <TodoListItem key={todoItem.id} todoItem={todoItem} />;
+          })}
+        </>
+      )}
+    </TodoContext.Consumer>
   );
 };
 

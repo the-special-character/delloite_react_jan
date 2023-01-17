@@ -5,6 +5,8 @@ import './style.css';
 import { FilterType } from '../types/types';
 // import App from './app';
 import App1 from './app1';
+import { LocaleProvider } from './context/localeContext';
+import { TodoProvider } from './context/todoContext';
 
 const container = document.getElementById('root');
 
@@ -63,10 +65,12 @@ if (container) {
   }
 
   root.render(
-    <>
-      <Todo />
+    <LocaleProvider>
+      <TodoProvider>
+        <Todo />
+      </TodoProvider>
       {/* <App logoText="Yagnesh Modh" heading="Banner Page" /> */}
       {/* <Test /> */}
-    </>,
+    </LocaleProvider>,
   );
 }

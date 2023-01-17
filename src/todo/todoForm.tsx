@@ -1,16 +1,13 @@
 import React, { forwardRef, memo } from 'react';
-import { StatusType } from '../../types/types';
+import { TodoContext } from '../context/todoContext';
 
-type Props = {
-  addTodo: (event: React.FormEvent<HTMLFormElement>) => void;
-  addTodoStatus?: StatusType;
-};
+type Props = {};
 
-const TodoForm = forwardRef<HTMLInputElement, Props>(
-  ({ addTodo, addTodoStatus }: Props, ref) => {
-    console.log('todoForm render');
-    return (
-      <>
+const TodoForm = forwardRef<HTMLInputElement, Props>(({}: Props, ref) => {
+  console.log('todoForm render');
+  return (
+    <TodoContext.Consumer>
+      {({ addTodo, todoTextInput }) => (
         <form className="flex" onSubmit={addTodo}>
           <div>
             <label htmlFor="todo_text" className="sr-only">
@@ -20,25 +17,20 @@ const TodoForm = forwardRef<HTMLInputElement, Props>(
               type="text"
               id="todo_text"
               placeholder="write your todo here"
-              ref={ref}
+              ref={todoTextInput}
             />
           </div>
           <button
-            disabled={addTodoStatus?.action === 'REQUEST'}
+            // disabled={addTodoStatus?.action === 'REQUEST'}
             type="submit"
             className="btn"
           >
             Add Todo
           </button>
         </form>
-        {addTodoStatus?.action === 'FAIL' && (
-          <p className="text-red-500 text-center text-xl">
-            {addTodoStatus.error?.message}
-          </p>
-        )}
-      </>
-    );
-  },
-);
+      )}
+    </TodoContext.Consumer>
+  );
+});
 
 export default memo(TodoForm);

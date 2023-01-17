@@ -1,31 +1,27 @@
 import React, { memo } from 'react';
 import { StatusType, TodoItemType } from '../../types/types';
 import clsx from 'clsx';
+import { LocaleContext } from '../context/localeContext';
+import { TodoContext } from '../context/todoContext';
 
 type Props = {
   todoItem: TodoItemType;
-  toggleComplete: (todoItem: TodoItemType) => void;
-  deleteTodo: (todoItem: TodoItemType) => void;
-  updateTodoStatus?: StatusType;
-  deleteTodoStatus?: StatusType;
 };
 
-const TodoListItem = ({
-  todoItem,
-  toggleComplete,
-  deleteTodo,
-  updateTodoStatus,
-  deleteTodoStatus,
-}: Props) => {
+const TodoListItem = ({ todoItem }: Props) => {
   console.log('todo list item');
   return (
     <div className="flex items-center m-4" key={todoItem.id}>
-      <input
-        type="checkbox"
-        checked={todoItem.isDone}
-        disabled={updateTodoStatus?.action === 'REQUEST'}
-        onChange={() => toggleComplete(todoItem)}
-      />
+      <TodoContext.Consumer>
+        {({ toggleComplete }) => (
+          <input
+            type="checkbox"
+            checked={todoItem.isDone}
+            // disabled={updateTodoStatus?.action === 'REQUEST'}
+            onChange={() => toggleComplete(todoItem)}
+          />
+        )}
+      </TodoContext.Consumer>
       <p
         key={todoItem.id}
         className={clsx('flex-1 px-4', {
@@ -37,13 +33,17 @@ const TodoListItem = ({
       >
         {todoItem.text}
       </p>
-      <button
-        className="btn"
-        disabled={deleteTodoStatus?.action === 'REQUEST'}
-        onClick={() => deleteTodo(todoItem)}
-      >
-        Delete
-      </button>
+      <TodoContext.Consumer>
+        {({ deleteTodo }) => (
+          <button
+            className="btn"
+            // disabled={deleteTodoStatus?.action === 'REQUEST'}
+            onClick={() => deleteTodo(todoItem)}
+          >
+            Delete
+          </button>
+        )}
+      </TodoContext.Consumer>
     </div>
   );
 };
