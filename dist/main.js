@@ -34020,7 +34020,6 @@ var Todo = /** @class */ (function (_super) {
     }
     Todo.prototype.render = function () {
         var _this = this;
-        console.log('render');
         var _a = this.state, todoList = _a.todoList, filterType = _a.filterType;
         return (react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", { className: "flex flex-col items-center h-screen" },
             react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", { className: "text-4xl font-bold my-10" }, "Todo App"),

@@ -5,8 +5,6 @@ import { TodoContext } from '../context/todoContext';
 type Props = {};
 
 const TodoFilter = ({}: Props) => {
-  console.log('TodoFilter render');
-
   return (
     <TodoContext.Consumer>
       {({ loadTodo }) => (

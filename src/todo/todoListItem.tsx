@@ -9,18 +9,23 @@ type Props = {
 };
 
 const TodoListItem = ({ todoItem }: Props) => {
-  console.log('todo list item');
+  console.log('todo item');
+
   return (
     <div className="flex items-center m-4" key={todoItem.id}>
       <TodoContext.Consumer>
-        {({ toggleComplete }) => (
-          <input
-            type="checkbox"
-            checked={todoItem.isDone}
-            // disabled={updateTodoStatus?.action === 'REQUEST'}
-            onChange={() => toggleComplete(todoItem)}
-          />
-        )}
+        {({ toggleComplete, getStatusDetails }) => {
+          return (
+            <input
+              type="checkbox"
+              checked={todoItem.isDone}
+              disabled={
+                !!getStatusDetails(todoItem.id, 'UPDATE_TODO', 'REQUEST')
+              }
+              onChange={() => toggleComplete(todoItem)}
+            />
+          );
+        }}
       </TodoContext.Consumer>
       <p
         key={todoItem.id}
@@ -34,10 +39,10 @@ const TodoListItem = ({ todoItem }: Props) => {
         {todoItem.text}
       </p>
       <TodoContext.Consumer>
-        {({ deleteTodo }) => (
+        {({ deleteTodo, getStatusDetails }) => (
           <button
             className="btn"
-            // disabled={deleteTodoStatus?.action === 'REQUEST'}
+            disabled={!!getStatusDetails(todoItem.id, 'DELETE_TODO', 'REQUEST')}
             onClick={() => deleteTodo(todoItem)}
           >
             Delete

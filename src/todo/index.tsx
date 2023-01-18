@@ -18,8 +18,6 @@ type State = {
 
 class Todo extends Component<Props, State> {
   render() {
-    console.log('render');
-
     return (
       <div className="flex flex-col items-center h-screen">
         <h1 className="text-4xl font-bold my-10">Todo App</h1>

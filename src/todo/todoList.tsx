@@ -5,7 +5,6 @@ import { TodoContext } from '../context/todoContext';
 type Props = {};
 
 const TodoList = ({}: Props) => {
-  console.log('TodoList render');
   return (
     <TodoContext.Consumer>
       {({ todoList }) => (

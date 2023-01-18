@@ -5,6 +5,7 @@ import React, {
   createRef,
 } from 'react';
 import { FilterType, StatusType, TodoItemType } from '../../types/types';
+import axiosInstance from '../utils/axiosInstance';
 
 type TodoContextType = {
   loadTodo: (filterType: FilterType) => Promise<void>;
@@ -12,6 +13,11 @@ type TodoContextType = {
   toggleComplete: (todoItem: TodoItemType) => Promise<void>;
   deleteTodo: (todoItem: TodoItemType) => Promise<void>;
   todoList: TodoItemType[];
+  getStatusDetails: (
+    id: number,
+    type: string,
+    action: 'REQUEST' | 'FAIL',
+  ) => StatusType | undefined;
   todoTextInput: React.RefObject<HTMLInputElement>;
 };
 
@@ -42,6 +48,33 @@ export class TodoProvider extends PureComponent<PropsWithChildren, State> {
 
   todoTextInput = createRef<HTMLInputElement>();
 
+  request = (id, type) => {
+    this.setState(({ status }) => {
+      return { status: [...status, { id: id, type, action: 'REQUEST' }] };
+    });
+  };
+
+  success = (id, type) => {
+    this.setState(({ status }) => {
+      return {
+        status: status.filter((x) => !(x.type === type && x.id === id)),
+      };
+    });
+  };
+
+  fail = (id, type, error) => {
+    this.setState(({ status }) => {
+      return {
+        status: status.map((x) => {
+          if (x.type === type && x.id === id) {
+            return { ...x, action: 'FAIL', error };
+          }
+          return x;
+        }),
+      };
+    });
+  };
+
   async componentDidMount() {
     this.loadTodo(FilterType.all);
   }
@@ -49,35 +82,20 @@ export class TodoProvider extends PureComponent<PropsWithChildren, State> {
   loadTodo = async (filterType: FilterType) => {
     const type = 'LOAD_TODO';
     try {
-      this.setState(({ status }) => {
-        return { status: [...status, { id: -1, type, action: 'REQUEST' }] };
-      });
+      this.request(-1, type);
 
-      let url = 'http://localhost:3000/todoList';
+      let url = 'todoList';
 
       if (filterType !== FilterType.all) {
         url = `${url}?isDone=${filterType === FilterType.completed}`;
       }
 
-      const res = await fetch(url);
-      const json = await res.json();
-      this.setState(({ status }) => {
-        return {
-          todoList: json,
-          status: status.filter((x) => x.type !== type),
-        };
-      });
+      const res = await axiosInstance.get(url);
+
+      this.setState({ todoList: res.data });
+      this.success(-1, type);
     } catch (error) {
-      this.setState(({ status }, props) => {
-        return {
-          status: status.map((x) => {
-            if (x.type === type) {
-              return { ...x, action: 'FAIL', error };
-            }
-            return x;
-          }),
-        };
-      });
+      this.fail(-1, type, error);
     }
   };
 
@@ -85,132 +103,89 @@ export class TodoProvider extends PureComponent<PropsWithChildren, State> {
     const type = 'ADD_TODO';
     try {
       event.preventDefault();
-      this.setState(({ status }) => {
-        return { status: [...status, { id: -1, type, action: 'REQUEST' }] };
-      });
+      this.request(-1, type);
       const todoTextInput = this.todoTextInput.current;
       if (todoTextInput) {
         const todoText = todoTextInput.value;
-        const res = await fetch('http://localhost:3000/todoList', {
-          method: 'POST',
-          body: JSON.stringify({ text: todoText, isDone: false }),
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
+        const res = await axiosInstance.post('todoList', {
+          text: todoText,
+          isDone: false,
         });
 
-        const json = await res.json();
-
         this.setState(
-          ({ todoList, status }) => {
+          ({ todoList }) => {
             return {
-              todoList: [...todoList, json],
-              status: status.filter((x) => x.type !== type),
+              todoList: [...todoList, res.data],
             };
           },
           () => {
             todoTextInput.value = '';
           },
         );
+        this.success(-1, type);
       }
     } catch (error) {
-      this.setState(({ status }, props) => {
-        return {
-          status: status.map((x) => {
-            if (x.type === type) {
-              return { ...x, action: 'FAIL', error };
-            }
-            return x;
-          }),
-        };
-      });
+      this.fail(-1, type, error);
     }
   };
 
   toggleComplete = async (todoItem: TodoItemType) => {
     const type = 'UPDATE_TODO';
     try {
-      this.setState(({ status }) => {
-        return {
-          status: [...status, { id: todoItem.id, type, action: 'REQUEST' }],
-        };
+      this.request(todoItem.id, type);
+      const res = await axiosInstance.put(`todoList/${todoItem.id}`, {
+        ...todoItem,
+        isDone: !todoItem.isDone,
       });
-      const res = await fetch(`http://localhost:3000/todoList/${todoItem.id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ ...todoItem, isDone: !todoItem.isDone }),
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-      });
-      const json = await res.json();
 
       this.setState(({ todoList, status }) => {
         const index = todoList.findIndex((x) => x.id === todoItem.id);
         return {
           todoList: [
             ...todoList.slice(0, index),
-            json,
+            res.data,
             ...todoList.slice(index + 1),
           ],
-          status: status.filter(
-            (x) => !(x.type === type && x.id === todoItem.id),
-          ),
         };
       });
+      this.success(todoItem.id, type);
     } catch (error) {
-      this.setState(({ status }, props) => {
-        return {
-          status: status.map((x) => {
-            if (x.type === type && x.id === todoItem.id) {
-              return { ...x, action: 'FAIL', error };
-            }
-            return x;
-          }),
-        };
-      });
+      this.fail(todoItem.id, type, error);
     }
   };
 
   deleteTodo = async (todoItem: TodoItemType) => {
     const type = 'DELETE_TODO';
     try {
-      this.setState(({ status }) => {
-        return {
-          status: [...status, { id: todoItem.id, type, action: 'REQUEST' }],
-        };
-      });
-      await fetch(`http://localhost:3000/todoList/${todoItem.id}`, {
-        method: 'DELETE',
-      });
+      this.request(todoItem.id, type);
+      await axiosInstance.delete(`todoList/${todoItem.id}`);
 
       this.setState(({ todoList, status }) => {
         const index = todoList.findIndex((x) => x.id === todoItem.id);
         return {
           todoList: [...todoList.slice(0, index), ...todoList.slice(index + 1)],
-          status: status.filter(
-            (x) => !(x.type === type && x.id === todoItem.id),
-          ),
         };
       });
+      this.success(todoItem.id, type);
     } catch (error) {
-      this.setState(({ status }) => {
-        return {
-          status: status.map((x) => {
-            if (x.type === type && x.id === todoItem.id) {
-              return { ...x, action: 'FAIL', error };
-            }
-            return x;
-          }),
-        };
-      });
+      this.fail(todoItem.id, type, error);
     }
+  };
+
+  getStatusDetails = (id: number, type: string, action: 'REQUEST' | 'FAIL') => {
+    const res = this.state.status.find(
+      (x) => x.id === id && x.type === type && x.action === action,
+    );
+
+    return res;
   };
 
   render() {
     const { children } = this.props;
-    const { todoList } = this.state;
+    const { todoList, status } = this.state;
+
+    console.log('status', status);
+
     return (
       <TodoContext.Provider
         value={{
@@ -218,6 +193,7 @@ export class TodoProvider extends PureComponent<PropsWithChildren, State> {
           addTodo: this.addTodo,
           toggleComplete: this.toggleComplete,
           deleteTodo: this.deleteTodo,
+          getStatusDetails: this.getStatusDetails,
           todoList,
           todoTextInput: this.todoTextInput,
         }}

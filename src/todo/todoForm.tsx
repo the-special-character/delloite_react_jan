@@ -4,10 +4,9 @@ import { TodoContext } from '../context/todoContext';
 type Props = {};
 
 const TodoForm = forwardRef<HTMLInputElement, Props>(({}: Props, ref) => {
-  console.log('todoForm render');
   return (
     <TodoContext.Consumer>
-      {({ addTodo, todoTextInput }) => (
+      {({ addTodo, todoTextInput, getStatusDetails }) => (
         <form className="flex" onSubmit={addTodo}>
           <div>
             <label htmlFor="todo_text" className="sr-only">
@@ -21,7 +20,7 @@ const TodoForm = forwardRef<HTMLInputElement, Props>(({}: Props, ref) => {
             />
           </div>
           <button
-            // disabled={addTodoStatus?.action === 'REQUEST'}
+            disabled={!!getStatusDetails(-1, 'ADD_TODO', 'REQUEST')}
             type="submit"
             className="btn"
           >
