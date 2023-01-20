@@ -2,9 +2,10 @@ import { FieldAttributes } from 'formik';
 import TextInput from '../../components/TextInput';
 import React from 'react';
 
-type LoginFormType = {
+export type LoginFormType = {
   email: string;
   password: string;
+  serverError?: string;
 };
 
 export const loginInitValues = {

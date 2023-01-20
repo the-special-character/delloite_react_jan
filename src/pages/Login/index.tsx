@@ -1,7 +1,7 @@
 import React from 'react';
-import { Form, Formik, Field } from 'formik';
 import { loginFields, loginInitValues } from './loginFields';
 import CustomForm from '../../components/CustomForm';
+import { useAuth } from '../../context/authContext';
 
 const wait = (time) =>
   new Promise((resolve) => {
@@ -11,12 +11,12 @@ const wait = (time) =>
 type Props = {};
 
 const Login = (props: Props) => {
+  const { login } = useAuth();
+
   return (
     <CustomForm
       initialValues={loginInitValues}
-      onSubmit={async () => {
-        await wait(3000);
-      }}
+      onSubmit={login}
       fields={loginFields}
       btnText="Sign in"
     >

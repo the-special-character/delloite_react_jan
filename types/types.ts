@@ -16,3 +16,12 @@ export type StatusType = {
   action: 'REQUEST' | 'FAIL';
   error?: Error;
 };
+
+export type UserType = {
+  accessToken: string;
+  user: {
+    email: string;
+    name: string;
+    id: number;
+  };
+};

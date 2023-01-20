@@ -57,6 +57,8 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.7",
+    "@heroicons/react": "^2.0.13",
     "@types/axios": "^0.14.0",
     "axios": "^1.2.3",
     "clsx": "^1.2.1",
