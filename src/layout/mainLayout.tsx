@@ -3,6 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 import Header from '../components/Header';
 import { ProductsProvider } from '../context/productsContext';
+import { CartProvider } from '../context/cartContext';
 
 type Props = {};
 
@@ -15,12 +16,14 @@ const MainLayout = (props: Props) => {
 
   return (
     <div>
-      <Header />
-      <ProductsProvider>
-        <main>
-          <Outlet />
-        </main>
-      </ProductsProvider>
+      <CartProvider>
+        <Header />
+        <ProductsProvider>
+          <main>
+            <Outlet />
+          </main>
+        </ProductsProvider>
+      </CartProvider>
       <footer></footer>
     </div>
   );

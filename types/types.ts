@@ -38,3 +38,9 @@ export type ProductType = {
     count: number;
   };
 };
+
+export type CartType = {
+  id: number;
+  productId: number;
+  quantity: number;
+};

@@ -14,7 +14,10 @@ type ProductsContextType = {
   products: ProductType[];
 };
 
-export const ProductsContext = createContext<ProductsContextType>({});
+export const ProductsContext = createContext<ProductsContextType>({
+  loadProducts: async () => {},
+  products: [],
+});
 
 export const ProductsProvider = ({ children }: PropsWithChildren) => {
   const [products, setProducts] = useState<ProductType[]>([]);
