@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { UserType } from '../../types/types';
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:3000',
@@ -9,6 +10,12 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   function (config) {
     // Do something before request is sent
+    const token = localStorage.getItem('user');
+    if (token) {
+      const tokenObj: UserType = JSON.parse(token);
+      config.headers.Authorization = `Bearer ${tokenObj.accessToken}`;
+    }
+
     return config;
   },
   function (error) {
