@@ -144,10 +144,12 @@ if (container) {
 
   root.render(
     <LocaleProvider>
-      <TodoProvider>{/* <Todo /> */}</TodoProvider>
+      <TodoProvider>
+        <Todo />
+      </TodoProvider>
       {/* <App logoText="Yagnesh Modh" heading="Banner Page" /> */}
       {/* <Test /> */}
-      <Hooks />
+      {/* <Hooks /> */}
     </LocaleProvider>,
   );
 }

@@ -1,8 +1,9 @@
 import React, {
-  PureComponent,
   createContext,
   PropsWithChildren,
-  createRef,
+  useState,
+  useRef,
+  useEffect,
 } from 'react';
 import { FilterType, StatusType, TodoItemType } from '../../types/types';
 import axiosInstance from '../utils/axiosInstance';
@@ -18,7 +19,7 @@ type TodoContextType = {
     type: string,
     action: 'REQUEST' | 'FAIL',
   ) => StatusType | undefined;
-  todoTextInput: React.RefObject<HTMLInputElement>;
+  todoTextInput?: React.MutableRefObject<HTMLInputElement>;
 };
 
 export const TodoContext = createContext<TodoContextType>({
@@ -27,7 +28,10 @@ export const TodoContext = createContext<TodoContextType>({
   toggleComplete: async () => {},
   deleteTodo: async () => {},
   todoList: [],
-  todoTextInput: null,
+  getStatusDetails: (id, type, action) => {
+    return undefined;
+  },
+  todoTextInput: undefined,
 });
 
 type State = {
@@ -36,170 +40,140 @@ type State = {
   status: StatusType[];
 };
 
-export class TodoProvider extends PureComponent<PropsWithChildren, State> {
-  constructor(props: PropsWithChildren) {
-    super(props);
-    this.state = {
-      todoList: [] as TodoItemType[],
-      filterType: FilterType.all,
-      status: [] as StatusType[],
-    };
-  }
+export const TodoProvider = ({ children }: PropsWithChildren) => {
+  const [todoList, setTodoList] = useState<TodoItemType[]>([]);
+  const [filterType, setFilterType] = useState<FilterType>(FilterType.all);
+  const [status, setStatus] = useState<StatusType[]>([]);
+  const todoTextInput = useRef<HTMLInputElement>();
 
-  todoTextInput = createRef<HTMLInputElement>();
-
-  request = (id, type) => {
-    this.setState(({ status }) => {
-      return { status: [...status, { id: id, type, action: 'REQUEST' }] };
-    });
+  const request = (id: number, type: string) => {
+    setStatus((value) => [...value, { id: id, type, action: 'REQUEST' }]);
   };
 
-  success = (id, type) => {
-    this.setState(({ status }) => {
-      return {
-        status: status.filter((x) => !(x.type === type && x.id === id)),
-      };
-    });
+  const success = (id: number, type: string) => {
+    setStatus((val) => val.filter((x) => !(x.type === type && x.id === id)));
   };
 
-  fail = (id, type, error) => {
-    this.setState(({ status }) => {
-      return {
-        status: status.map((x) => {
-          if (x.type === type && x.id === id) {
-            return { ...x, action: 'FAIL', error };
-          }
-          return x;
-        }),
-      };
-    });
+  const fail = (id: number, type: string, error: Error) => {
+    setStatus((val) =>
+      val.map((x) => {
+        if (x.type === type && x.id === id) {
+          return { ...x, action: 'FAIL', error };
+        }
+        return x;
+      }),
+    );
   };
 
-  async componentDidMount() {
-    this.loadTodo(FilterType.all);
-  }
+  useEffect(() => {
+    loadTodo(FilterType.all);
+  }, []);
 
-  loadTodo = async (filterType: FilterType) => {
+  const loadTodo = async (ft: FilterType) => {
     const type = 'LOAD_TODO';
     try {
-      this.request(-1, type);
+      request(-1, type);
 
       let url = 'todoList';
 
-      if (filterType !== FilterType.all) {
+      if (ft !== FilterType.all) {
         url = `${url}?isDone=${filterType === FilterType.completed}`;
       }
 
       const res = await axiosInstance.get(url);
 
-      this.setState({ todoList: res.data });
-      this.success(-1, type);
+      setTodoList(res.data);
+      setFilterType(ft);
+      success(-1, type);
     } catch (error) {
-      this.fail(-1, type, error);
+      fail(-1, type, error);
     }
   };
 
-  addTodo = async (event: React.FormEvent<HTMLFormElement>) => {
+  const addTodo = async (event: React.FormEvent<HTMLFormElement>) => {
     const type = 'ADD_TODO';
     try {
       event.preventDefault();
-      this.request(-1, type);
-      const todoTextInput = this.todoTextInput.current;
-      if (todoTextInput) {
-        const todoText = todoTextInput.value;
+      request(-1, type);
+      if (todoTextInput?.current) {
+        const todoText = todoTextInput.current.value;
         const res = await axiosInstance.post('todoList', {
           text: todoText,
           isDone: false,
         });
-
-        this.setState(
-          ({ todoList }) => {
-            return {
-              todoList: [...todoList, res.data],
-            };
-          },
-          () => {
-            todoTextInput.value = '';
-          },
-        );
-        this.success(-1, type);
+        setTodoList((val) => [...val, res.data]);
+        todoTextInput.current.value = '';
+        success(-1, type);
       }
     } catch (error) {
-      this.fail(-1, type, error);
+      fail(-1, type, error);
     }
   };
 
-  toggleComplete = async (todoItem: TodoItemType) => {
+  const toggleComplete = async (todoItem: TodoItemType) => {
     const type = 'UPDATE_TODO';
     try {
-      this.request(todoItem.id, type);
+      request(todoItem.id, type);
       const res = await axiosInstance.put(`todoList/${todoItem.id}`, {
         ...todoItem,
         isDone: !todoItem.isDone,
       });
 
-      this.setState(({ todoList, status }) => {
-        const index = todoList.findIndex((x) => x.id === todoItem.id);
-        return {
-          todoList: [
-            ...todoList.slice(0, index),
-            res.data,
-            ...todoList.slice(index + 1),
-          ],
-        };
+      setTodoList((val) => {
+        const index = val.findIndex((x) => x.id === todoItem.id);
+        return [
+          ...todoList.slice(0, index),
+          res.data,
+          ...todoList.slice(index + 1),
+        ];
       });
-      this.success(todoItem.id, type);
+      success(todoItem.id, type);
     } catch (error) {
-      this.fail(todoItem.id, type, error);
+      fail(todoItem.id, type, error);
     }
   };
 
-  deleteTodo = async (todoItem: TodoItemType) => {
+  const deleteTodo = async (todoItem: TodoItemType) => {
     const type = 'DELETE_TODO';
     try {
-      this.request(todoItem.id, type);
+      request(todoItem.id, type);
       await axiosInstance.delete(`todoList/${todoItem.id}`);
 
-      this.setState(({ todoList, status }) => {
+      setTodoList((val) => {
         const index = todoList.findIndex((x) => x.id === todoItem.id);
-        return {
-          todoList: [...todoList.slice(0, index), ...todoList.slice(index + 1)],
-        };
+        return [...todoList.slice(0, index), ...todoList.slice(index + 1)];
       });
-      this.success(todoItem.id, type);
+
+      success(todoItem.id, type);
     } catch (error) {
-      this.fail(todoItem.id, type, error);
+      fail(todoItem.id, type, error);
     }
   };
 
-  getStatusDetails = (id: number, type: string, action: 'REQUEST' | 'FAIL') => {
-    const res = this.state.status.find(
+  const getStatusDetails = (
+    id: number,
+    type: string,
+    action: 'REQUEST' | 'FAIL',
+  ) => {
+    const res = status.find(
       (x) => x.id === id && x.type === type && x.action === action,
     );
-
     return res;
   };
 
-  render() {
-    const { children } = this.props;
-    const { todoList, status } = this.state;
-
-    console.log('status', status);
-
-    return (
-      <TodoContext.Provider
-        value={{
-          loadTodo: this.loadTodo,
-          addTodo: this.addTodo,
-          toggleComplete: this.toggleComplete,
-          deleteTodo: this.deleteTodo,
-          getStatusDetails: this.getStatusDetails,
-          todoList,
-          todoTextInput: this.todoTextInput,
-        }}
-      >
-        {children}
-      </TodoContext.Provider>
-    );
-  }
-}
+  return (
+    <TodoContext.Provider
+      value={{
+        loadTodo,
+        addTodo,
+        toggleComplete,
+        deleteTodo,
+        getStatusDetails,
+        todoList,
+        todoTextInput,
+      }}
+    >
+      {children}
+    </TodoContext.Provider>
+  );
+};

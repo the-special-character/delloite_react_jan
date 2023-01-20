@@ -1,19 +1,9 @@
 {
   "todoList": [
     {
-      "text": "SDFADSF",
-      "isDone": true,
-      "id": 14
-    },
-    {
       "text": "DFASDF",
       "isDone": true,
       "id": 17
-    },
-    {
-      "text": "ASDFADSFASD",
-      "isDone": false,
-      "id": 18
     },
     {
       "text": "Fsdfadsf",
@@ -21,9 +11,24 @@
       "id": 19
     },
     {
-      "text": "sdfgfsdg",
+      "text": "asdfasdf",
       "isDone": false,
-      "id": 20
+      "id": 21
+    },
+    {
+      "text": "asdfasdfasdf",
+      "isDone": true,
+      "id": 23
+    },
+    {
+      "text": "get milk",
+      "isDone": false,
+      "id": 25
+    },
+    {
+      "text": "asdfadsf",
+      "isDone": false,
+      "id": 27
     }
   ]
 }
