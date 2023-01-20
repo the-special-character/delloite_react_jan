@@ -11,16 +11,21 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import NotFound from './pages/NotFound';
 import MainLayout from './layout/mainLayout';
+import AuthLayout from './layout/authLayout';
 
 export default createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<MainLayout />}>
-      <Route index element={<Home />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+    <>
+      <Route path="/" element={<MainLayout />}>
+        <Route index element={<Home />} />
+        <Route path="about" element={<About />} />
+        <Route path="contact" element={<Contact />} />
+      </Route>
+      <Route path="/auth" element={<AuthLayout />}>
+        <Route index element={<Login />} />
+        <Route path="register" element={<Register />} />
+      </Route>
       <Route path="*" element={<NotFound />} />
-    </Route>,
+    </>,
   ),
 );
