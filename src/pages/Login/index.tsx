@@ -1,35 +1,25 @@
 import React from 'react';
-import { Formik } from 'formik';
+import { Form, Formik, Field } from 'formik';
+import { loginFields, loginInitValues } from './loginFields';
+import CustomForm from '../../components/CustomForm';
 
-import TextInput from '../../components/TextInput';
+const wait = (time) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
 
 type Props = {};
 
 const Login = (props: Props) => {
   return (
-    <form className="mt-8 space-y-6" action="#" method="POST">
-      <input type="hidden" name="remember" defaultValue="true" />
-      <div className="-space-y-px rounded-md shadow-sm">
-        <TextInput
-          id="email-address"
-          name="email"
-          type="email"
-          autoComplete="email"
-          placeholder="Email address"
-          className="rounded-t-md"
-          required
-        />
-        <TextInput
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          placeholder="Password"
-          className="rounded-b-md"
-          required
-        />
-      </div>
-
+    <CustomForm
+      initialValues={loginInitValues}
+      onSubmit={async () => {
+        await wait(3000);
+      }}
+      fields={loginFields}
+      btnText="Sign in"
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <input
@@ -55,22 +45,7 @@ const Login = (props: Props) => {
           </a>
         </div>
       </div>
-
-      <div>
-        <button
-          type="submit"
-          className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        >
-          {/* <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                <LockClosedIcon
-                  className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
-                  aria-hidden="true"
-                />
-              </span> */}
-          Sign in
-        </button>
-      </div>
-    </form>
+    </CustomForm>
   );
 };
 

@@ -30,5 +30,19 @@
       "isDone": false,
       "id": 27
     }
+  ],
+  "users": [
+    {
+      "email": "yagnesh.modh@gmail.com",
+      "password": "$2a$10$7dXRDXajEP9jTOfO3b.cGO0j8fufjuANfiZVIXmMSQsPS7hzGMXoK",
+      "name": "YAGNESH MODH",
+      "id": 1
+    },
+    {
+      "email": "dsp.ce28@gmail.com",
+      "password": "$2a$10$NrBAjCB/9woJpsw.4T0wLOTSk5FLnTjII7FA5w3opMAVRP0LVUSt2",
+      "name": "Virat Kohli",
+      "id": 2
+    }
   ]
 }
