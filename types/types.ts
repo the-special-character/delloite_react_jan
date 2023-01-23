@@ -40,7 +40,7 @@ export type ProductType = {
 };
 
 export type CartType = {
-  id: number;
+  id?: number;
   productId: number;
   quantity: number;
 };

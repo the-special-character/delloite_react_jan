@@ -8,6 +8,8 @@ import React, {
 } from 'react';
 import axiosInstance from '../utils/axiosInstance';
 import { ProductType } from '../../types/types';
+import { useAuth } from './authContext';
+import useErrorHandle from '../hooks/useErrorHandle';
 
 type ProductsContextType = {
   loadProducts: () => Promise<void>;
@@ -21,12 +23,15 @@ export const ProductsContext = createContext<ProductsContextType>({
 
 export const ProductsProvider = ({ children }: PropsWithChildren) => {
   const [products, setProducts] = useState<ProductType[]>([]);
+  const handleError = useErrorHandle();
 
   const loadProducts = useCallback(async () => {
     try {
       const res = await axiosInstance.get<ProductType[]>('660/products', {});
       setProducts(res.data);
-    } catch (error) {}
+    } catch (error) {
+      handleError(error);
+    }
   }, []);
 
   const value = useMemo(
