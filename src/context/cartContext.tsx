@@ -4,11 +4,17 @@ import React, {
   useCallback,
   useContext,
   useMemo,
+  useReducer,
   useState,
 } from 'react';
 import axiosInstance from '../utils/axiosInstance';
-import { CartType } from '../../types/types';
+import { CartType, StatusType } from '../../types/types';
 import useErrorHandle from '../hooks/useErrorHandle';
+import {
+  CartReducer,
+  CartValueType,
+  cartInitStateValue,
+} from '../reducers/cartReducer';
 
 type CartContextType = {
   loadCart: () => Promise<void>;
@@ -16,6 +22,7 @@ type CartContextType = {
   updateCartItem: (data: CartType) => Promise<void>;
   deleteCartItem: (data: CartType) => Promise<void>;
   cart: CartType[];
+  loading: StatusType[];
 };
 
 export const CartContext = createContext<CartContextType>({
@@ -24,66 +31,92 @@ export const CartContext = createContext<CartContextType>({
   updateCartItem: async () => {},
   deleteCartItem: async () => {},
   cart: [],
+  loading: [],
 });
 
 export const CartProvider = ({ children }: PropsWithChildren) => {
-  const [cart, setCart] = useState<CartType[]>([]);
+  const [{ cart, loading }, dispatch] = useReducer(
+    CartReducer,
+    cartInitStateValue,
+  );
   const handleError = useErrorHandle();
 
   const loadCart = useCallback(async () => {
     try {
+      dispatch({ type: 'LOAD_CART_REQUEST', payload: {} });
       const res = await axiosInstance.get<CartType[]>('660/cart');
-      setCart(res.data);
+      dispatch({ type: 'LOAD_CART_SUCCESS', payload: res.data });
     } catch (error) {
       handleError(error);
+      dispatch({ type: 'LOAD_CART_FAIL', payload: error });
     }
   }, []);
 
   const addToCart = useCallback(async (data: CartType) => {
     try {
+      dispatch({
+        type: 'ADD_CART_REQUEST',
+        payload: { productId: data.productId },
+      });
       const res = await axiosInstance.post<CartType>('660/cart', data);
-      setCart((val) => [...val, res.data]);
+      dispatch({ type: 'ADD_CART_SUCCESS', payload: res.data });
     } catch (error) {
-      handleError(error);
+      dispatch({ type: 'ADD_CART_FAIL', payload: error });
     }
   }, []);
 
   const updateCartItem = useCallback(async (data: CartType) => {
     try {
+      dispatch({
+        type: 'UPDATE_CART_REQUEST',
+        payload: { productId: data.productId },
+      });
       const res = await axiosInstance.put<CartType>(
         `660/cart/${data.id}`,
         data,
       );
-      setCart((val) => {
-        const index = val.findIndex((x) => x.id === data.id);
-        return [...val.slice(0, index), res.data, ...val.slice(index + 1)];
+      dispatch({
+        type: 'UPDATE_CART_SUCCESS',
+        payload: res.data,
       });
     } catch (error) {
       handleError(error);
+      dispatch({
+        type: 'UPDATE_CART_FAIL',
+        payload: error,
+      });
     }
   }, []);
 
   const deleteCartItem = useCallback(async (data: CartType) => {
     try {
+      dispatch({
+        type: 'DELETE_CART_REQUEST',
+        payload: { productId: data.productId },
+      });
       await axiosInstance.delete<CartType>(`660/cart/${data.id}`);
-      setCart((val) => {
-        const index = val.findIndex((x) => x.id === data.id);
-        return [...val.slice(0, index), ...val.slice(index + 1)];
+      dispatch({
+        type: 'DELETE_CART_SUCCESS',
+        payload: data,
       });
     } catch (error) {
-      handleError(error);
+      dispatch({
+        type: 'DELETE_CART_FAIL',
+        payload: error,
+      });
     }
   }, []);
 
   const value = useMemo(
     () => ({
       cart,
+      loading,
       loadCart,
       addToCart,
       updateCartItem,
       deleteCartItem,
     }),
-    [cart],
+    [cart, loading],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

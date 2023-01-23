@@ -7,8 +7,14 @@ type Props = {};
 
 const Home = (props: Props) => {
   const { products, loadProducts } = useProducts();
-  const { cart, loadCart, addToCart, updateCartItem, deleteCartItem } =
-    useCart();
+  const {
+    cart,
+    loading: cartLoading,
+    loadCart,
+    addToCart,
+    updateCartItem,
+    deleteCartItem,
+  } = useCart();
 
   useEffect(() => {
     loadData();
@@ -22,11 +28,25 @@ const Home = (props: Props) => {
 
   return (
     <div>
-      {products.map((product) => {
+      {products?.map((product) => {
         const cartItem = cart.find((x) => x.productId === product.id);
+        const isAdding = cartLoading.some(
+          (x) => x.id === product.id && x.actionName === 'ADD_CART',
+        );
+
+        const isUpdating = cartLoading.some(
+          (x) => x.id === product.id && x.actionName === 'UPDATE_CART',
+        );
+
+        const isDeleting = cartLoading.some(
+          (x) => x.id === product.id && x.actionName === 'DELETE_CART',
+        );
 
         return (
-          <div className="mx-auto max-w-7xl my-8 px-4 grid w-full grid-cols-1 items-start gap-y-8 gap-x-6 sm:grid-cols-12 lg:gap-x-8">
+          <div
+            key={product.id}
+            className="mx-auto max-w-7xl my-8 px-4 grid w-full grid-cols-1 items-start gap-y-8 gap-x-6 sm:grid-cols-12 lg:gap-x-8"
+          >
             <div className="aspect-w-2 aspect-h-3 overflow-hidden rounded-lg bg-gray-100 sm:col-span-4 lg:col-span-3">
               <img
                 src={product.image}
@@ -53,13 +73,14 @@ const Home = (props: Props) => {
                   <div className="flex items-center mt-6 ">
                     <button
                       type="button"
+                      disabled={isUpdating}
                       onClick={() => {
                         updateCartItem({
                           ...cartItem,
                           quantity: cartItem.quantity + 1,
                         });
                       }}
-                      className="flex-1 w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      className="flex-1 w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-slate-400 disabled:cursor-wait"
                     >
                       +
                     </button>
@@ -68,6 +89,7 @@ const Home = (props: Props) => {
                     </p>
                     <button
                       type="button"
+                      disabled={cartItem.quantity > 1 ? isUpdating : isDeleting}
                       onClick={() => {
                         if (cartItem.quantity > 1) {
                           updateCartItem({
@@ -78,7 +100,7 @@ const Home = (props: Props) => {
                           deleteCartItem(cartItem);
                         }
                       }}
-                      className="flex-1 w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      className="flex-1 w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-slate-400 disabled:cursor-wait"
                     >
                       -
                     </button>
@@ -86,13 +108,14 @@ const Home = (props: Props) => {
                 ) : (
                   <button
                     type="button"
+                    disabled={isAdding}
                     onClick={() => {
                       addToCart({
                         productId: product.id,
                         quantity: 1,
                       });
                     }}
-                    className="mt-6 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    className="mt-6 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-slate-400 disabled:cursor-wait"
                   >
                     Add to bag
                   </button>

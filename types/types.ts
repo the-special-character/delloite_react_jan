@@ -12,8 +12,8 @@ export enum FilterType {
 
 export type StatusType = {
   id: number;
-  type: string;
-  action: 'REQUEST' | 'FAIL';
+  actionName: string;
+  actionType: 'REQUEST' | 'FAIL';
   error?: Error;
 };
 
