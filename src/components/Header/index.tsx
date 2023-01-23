@@ -6,6 +6,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/authContext';
+import { useCart } from '../../context/cartContext';
 
 const navigation = [
   { name: 'Dashboard', href: '#', current: true },
@@ -22,6 +23,7 @@ type Props = {};
 
 const Header = (props: Props) => {
   const { logout } = useAuth();
+  const { cart } = useCart();
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -79,7 +81,11 @@ const Header = (props: Props) => {
                   className="flex items-center gap-2 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 >
                   <ShoppingBagIcon className="h-6 w-6" aria-hidden="true" />
-                  <span>0</span>
+                  <span>
+                    {cart.reduce((p, c) => {
+                      return p + c.quantity;
+                    }, 0)}
+                  </span>
                 </button>
 
                 {/* Profile dropdown */}

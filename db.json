@@ -287,16 +287,5 @@
       }
     }
   ],
-  "cart": [
-    {
-      "productId": 1,
-      "quantity": 3,
-      "id": 5
-    },
-    {
-      "productId": 2,
-      "quantity": 4,
-      "id": 6
-    }
-  ]
+  "cart": []
 }
