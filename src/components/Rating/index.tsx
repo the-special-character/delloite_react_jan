@@ -15,9 +15,10 @@ const Rating = ({ rate, count }: Props) => {
         <div className="flex items-center">
           {[0, 1, 2, 3, 4].map((rating) => (
             <StarIcon
+              data-testid="rating-svg"
               key={rating}
               className={clsx('h-5 w-5 flex-shrink-0', {
-                'text-gray-900': rate > rating,
+                'text-gray-800': rate > rating,
                 'text-gray-200': rate <= rating,
               })}
               aria-hidden="true"

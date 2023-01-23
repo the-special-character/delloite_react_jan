@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1674473829967" clover="3.2.0">
+  <project timestamp="1674473829967" name="All files">
+    <metrics statements="10" coveredstatements="6" conditionals="6" coveredconditionals="1" methods="6" coveredmethods="4" elements="22" coveredelements="11" complexity="0" loc="10" ncloc="10" packages="2" files="2" classes="2"/>
+    <package name="Product">
+      <metrics statements="7" coveredstatements="3" conditionals="6" coveredconditionals="1" methods="4" coveredmethods="2"/>
+      <file name="Product.tsx" path="/Users/yagneshmodh/Documents/Projects/delloite_react_jan/src/components/Product/Product.tsx">
+        <metrics statements="7" coveredstatements="3" conditionals="6" coveredconditionals="1" methods="4" coveredmethods="2"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="16" count="3" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="72" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="92" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="Rating">
+      <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+      <file name="index.tsx" path="/Users/yagneshmodh/Documents/Projects/delloite_react_jan/src/components/Rating/index.tsx">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="11" count="7" type="stmt"/>
+        <line num="17" count="35" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

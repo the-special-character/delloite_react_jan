@@ -13,11 +13,9 @@ const Product = ({
   isUpdating,
   isDeleting,
 }: Props) => {
-  console.log('render of product');
-
   return (
     <div
-      key={product.id}
+      data-testid="product-wrapper"
       className="mx-auto max-w-7xl my-8 px-4 grid w-full grid-cols-1 items-start gap-y-8 gap-x-6 sm:grid-cols-12 lg:gap-x-8"
     >
       <div className="aspect-w-2 aspect-h-3 overflow-hidden rounded-lg bg-gray-100 sm:col-span-4 lg:col-span-3">
@@ -51,6 +49,7 @@ const Product = ({
             <div className="flex items-center mt-6 ">
               <button
                 type="button"
+                data-testid="update-btn"
                 disabled={isUpdating}
                 onClick={() => {
                   updateCartItem({
@@ -67,6 +66,7 @@ const Product = ({
               </p>
               <button
                 type="button"
+                data-testid="delete-btn"
                 disabled={cartItem.quantity > 1 ? isUpdating : isDeleting}
                 onClick={() => {
                   if (cartItem.quantity > 1) {
@@ -86,6 +86,7 @@ const Product = ({
           ) : (
             <button
               type="button"
+              data-testid="add-btn"
               disabled={isAdding}
               onClick={() => {
                 addToCart({
