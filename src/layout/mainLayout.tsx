@@ -18,7 +18,7 @@ const MainLayout = (props: Props) => {
     <div>
       <CartProvider>
         <ProductsProvider>
-          {/* <Header /> */}
+          <Header />
           <main>
             <Outlet />
           </main>

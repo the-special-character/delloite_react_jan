@@ -8,6 +8,8 @@ import {
 import { useAuth } from '../../context/authContext';
 import { useCart } from '../../context/cartContext';
 import { useProducts } from '../../context/productsContext';
+import { connect } from 'react-redux';
+import { deleteCartItem } from '../../actions/cartActions';
 
 const navigation = [
   { name: 'Dashboard', href: '#', current: true },
@@ -22,11 +24,9 @@ function classNames(...classes) {
 
 type Props = {};
 
-const Header = (props: Props) => {
+const Header = ({ cart, products, deleteCartItem }: Props) => {
   const [open, setOpen] = useState(false);
   const { logout } = useAuth();
-  const { cart, deleteCartItem } = useCart();
-  const { products } = useProducts();
 
   return (
     <>
@@ -350,4 +350,17 @@ const Header = (props: Props) => {
   );
 };
 
-export default Header;
+const mapStateToProps = ({ cart, products }) => {
+  return {
+    cart,
+    products,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deleteCartItem: (data) => deleteCartItem(data)(dispatch),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
