@@ -62,7 +62,12 @@ const Home = (props: Props) => {
               <section aria-labelledby="information-heading" className="mt-2">
                 <h3 id="information-heading">{product.description}</h3>
 
-                <p className="text-2xl text-gray-900">{product.price}</p>
+                <p className="text-2xl text-gray-900">
+                  {new Intl.NumberFormat('en-IN', {
+                    currency: 'INR',
+                    style: 'currency',
+                  }).format(product.price)}
+                </p>
 
                 {/* Reviews */}
                 <Rating {...product.rating} />
