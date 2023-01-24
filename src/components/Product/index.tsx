@@ -30,9 +30,24 @@ const mapStateToProps = ({ loading, cart }, { product }) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addToCart: (data) => addToCart(data)(dispatch),
-    updateCartItem: (data) => updateCartItem(data)(dispatch),
-    deleteCartItem: (data) => deleteCartItem(data)(dispatch),
+    addToCart: (data) =>
+      dispatch({
+        type: 'ADD_CART_REQUEST',
+        payload: data,
+        meta: { loadingId: data.productId },
+      }),
+    updateCartItem: (data) =>
+      dispatch({
+        type: 'UPDATE_CART_REQUEST',
+        payload: data,
+        meta: { loadingId: data.productId },
+      }),
+    deleteCartItem: (data) =>
+      dispatch({
+        type: 'DELETE_CART_REQUEST',
+        payload: data,
+        meta: { loadingId: data.productId },
+      }),
   };
 };
 

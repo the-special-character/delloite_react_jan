@@ -295,8 +295,23 @@
     },
     {
       "productId": 1,
-      "quantity": 3,
+      "quantity": 1,
       "id": 3
+    },
+    {
+      "productId": 4,
+      "quantity": 1,
+      "id": 4
+    },
+    {
+      "productId": 4,
+      "quantity": 1,
+      "id": 5
+    },
+    {
+      "productId": 4,
+      "quantity": 1,
+      "id": 6
     }
   ]
 }
